@@ -1,0 +1,46 @@
+
+[language]
+    lang = "it-IT"
+    voice = "Carla"   # Giorgio, Bianca, Carla
+
+[buttons]
+# Mars Gaming controller:
+# 4 3 0 5
+# 6 2 1 7
+    [buttons.4]
+    type = "tts"
+    name = "Cura della persona"
+    options = [
+        "Mi aiuti a soffiarmi il naso?",
+        "Ho freddo",
+        "Ho caldo",
+    ]
+    activator = 6
+
+    [buttons.3]
+    type = "tts"
+    name = "si / no"
+    options = [
+        "si",
+        "no"
+    ]
+    activator = 2
+
+    [buttons.0]
+    type = "tts"
+    name = "Telefono"
+    options = [
+        "Ho finito, razie",
+        "Chiamiamo Tommaso?",
+        "Chiamiamo Danila?",
+    ]
+    activator = 1
+
+#    [buttons.5]
+#    type = "pspgamer.plugin.bose.SoundTouch"
+#    name = "Bose SoundTouch"
+#    options = [ ]
+
+
+
+
