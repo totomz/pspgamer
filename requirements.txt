@@ -1,8 +1,5 @@
 pygame==2.0.0.dev6
 boto3~=1.13.19
 python-dotenv~=0.14.0
-samsungctl
-toml
-numpy
-git+https://github.com/marysieek/samsung-tv-api.git
-beepy
+toml~=0.10.1
+numpy~=1.19.2

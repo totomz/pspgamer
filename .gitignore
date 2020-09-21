@@ -131,3 +131,9 @@ dmypy.json
 test.py
 speech/
 
+.idea
+.env
+
+# speech/ contains the text to speach audio files. Keep the folder
+speech/*
+!speech/.gitkeep
