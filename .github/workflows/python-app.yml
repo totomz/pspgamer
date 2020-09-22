@@ -11,14 +11,14 @@ on:
 
 jobs:
   build:
-
-    runs-on: python:3.8-buster
-
+    runs-on: ubuntu-18.04
+    container:
+      image: python:3.8-buster
     steps:
       - name: Install dependencies
         run: |
           # Alsa audio is required by pygame
-          apt-get install libasound2-dev
+          apt-get install -y libasound2-dev
           python -m pip install --upgrade pip
           pip install flake8 pytest
           pip install -r requirements.txt
@@ -27,7 +27,7 @@ jobs:
           # stop the build if there are Python syntax errors or undefined names
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+#          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest
         run: |
-        pytest
+          pytest
