@@ -1,13 +1,21 @@
 import pygame
 import logging
-import toml
+import os
+
+# os.environ["SDL_VIDEODRIVER"] = "dummy"
+
+from pydoc import locate
+from pspgamer.Configuration import Configuration
 from pspgamer.controllers.Joypad import JoypadController, MarsJoypad
+from pspgamer.controllers.Keyboards import ThreePedalKeyboard, KeyboardController
+from pspgamer.plugin.Plugin import BasePlugin
 from pspgamer.test.Speecher import Speecher
 
 
 class Main:
-    def __init__(self, joypad: JoypadController):
+    def __init__(self, joypad: JoypadController, keyboard: KeyboardController):
         self.joypad = joypad
+        self.keyboard = keyboard
         self.log = logging.getLogger("Main")
 
     def run(self):
@@ -19,8 +27,10 @@ class Main:
         ###################
         done = False
         while not done:
-            # for event in pygame.event.get():
             event = pygame.event.wait()
+            # event = pygame.event.get()
+
+            print(f"PING {event.type}")
 
             if event.type == pygame.QUIT: # If user clicked close.
                 done = True # Flag that we are done so we exit this loop.
@@ -34,24 +44,39 @@ class Main:
             elif event.type == pygame.JOYAXISMOTION:
                 self.joypad.handle_event_axis_motion(event=event)
 
+            elif event.type == pygame.KEYUP:
+                self.keyboard.handle_event_key_up(event=event)
+
+            elif event.type == pygame.KEYUP:
+                self.keyboard.handle_event_key_down(event=event)
+
 
 if __name__ == "__main__":
+    #############
+    # Internals #
+    #############
+    def load_plugin(item: dict):
+        log.info(f"Loading {item['type']}")
+        my_class = locate(item['type'])
+        instance: BasePlugin = my_class()
+        instance.initialize(item)
+        return instance
 
+    ########
+    # Main #
+    ########
     log = logging.getLogger("main")
+    conf = Configuration().as_dict()
 
-    conf = toml.load('./default.toml')
-    print(conf)
+    # Initialize controllers
+    try:
+        joypad = MarsJoypad()
+    except Exception:
+        log.info("No Joypad controller found")
+        joypad = None
 
-    # Initializing controllers
-    joypad = MarsJoypad()
-    tts = Speecher()
-
-    # This stuff handles the list of pre-defined text messages
-    # Struct contiene i messaggi delle categorie.
-    # struct[0] Contiene il titolo della categoria
-    # struct[1] Contiene l'elenco dei messaggi
-    # struct[2] Contiene l'elenco dei messaggi che sto ciclando
-    struct = {-1: -1}
+    keyboard: KeyboardController = ThreePedalKeyboard()
+    # tts = Speecher()
 
     def click_struct_ctts(voice):
         def handler(event):
@@ -77,50 +102,43 @@ if __name__ == "__main__":
 
         def inner(evnt):
             message = struct[btn][2][-1]
-            tts.say(message=f"DICO: {message}", voice=voice)
+            # tts.say(message=f"DICO: {message}", voice=voice)
         return inner
 
+
+    plugins = {}    # Temporary map for registered plugins
     ############################
-    log.info("Loading Buttons")
+    log.info("Loading Plugins")
     ############################
+    for name, item in conf['plugins'].items():
+        print(name)
+        pconf = conf['plugins'][name]
+        plugin = load_plugin(pconf)
+        plugins[name] = plugin
 
-    for name, item in conf['buttons'].items():
+    # ############################
+    # log.info("Loading Buttons")
+    # ############################
+    # for name, item in conf['keyboard'].items():
+    #     keycode = name
+    #
+    #     plugin = plugins[conf['keyboard'][keycode]['handler']]
+    #
+    #     keyboard.add_key_handler(
+    #         keys=[keycode],
+    #         button_up=True,
+    #         handler=plugin.handler
+    #     )
+    #
+    # for name, item in conf['buttons'].items():
+    #
+    #     button = int(name)
 
-        button = int(name)
-
-        if item['type'] == "tts":
-            struct[button] = [item['name'], item['options'], item['name']]
-            joypad.add_button_handler(
-                buttons=[button],
-                button_up=True,
-                handler=click_struct_ctts(voice=conf['language']['voice'])
-            )
-
-            joypad.add_button_handler(
-                buttons=[int(item['activator'])],
-                button_up=True,
-                handler=say_struct(btn=button, voice=conf['language']['voice'])
-            )
-
-        elif item['type'].startswith("pspgamer.plugin."):
-            print("dio")
-            module_name = item['type']
-            class_name = "Plugin"
-
-            log.info(f"Loading {module_name}.{class_name}")
-
-            module = __import__(module_name, fromlist=[class_name])
-            my_class = getattr(module, class_name)
-            instance = my_class()
-
-            log.info("E mo che bindo allinstance?")
-
-        else:
-            log.warning(f"Invalid type [{item['type']} for button {button} - ignoring")
-            continue
-
-    app = Main(joypad=joypad)
-    log.info("Inizio")
+    app = Main(
+        joypad=joypad,
+        keyboard=keyboard
+    )
+    log.info("Starting...")
     app.run()
 
 

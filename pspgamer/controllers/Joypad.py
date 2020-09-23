@@ -37,6 +37,8 @@ class MarsJoypad(JoypadController):
     def add_button_handler(self, buttons: list, handler: callable = None, button_up=False):
         for button in buttons:
             if button_up:
+                handlers = self.handlers_up.get(button, list())
+                handlers.append(handler)
                 self.handlers_up[button] = handler
             else:
                 self.handlers_down[button] = handler

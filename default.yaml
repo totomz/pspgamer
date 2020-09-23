@@ -1,27 +1,33 @@
-
-[language]
+language:
     lang = "it-IT"
     voice = "Carla"   # Giorgio, Bianca, Carla
 
-[keyboard]
-    [b]
-    type = "pspgamer.plugin.tts.CategoryTTS"
-    name = "Cura della persona"
-    options = [
-        "Mi aiuti a soffiarmi il naso?",
-        "Dovrei andare in bagno",
-        "Ho freddo",
-        "Ho caldo"
-    ]
-    action_say = "c"
+plugins:
+  categorytts:
+    type: pspgamer.plugin.tts.CategoryTTS.CategoryTTS
+    categories:
+      "cura della persona":
+        - "Mi aiuti a soffiarmi il naso?"
+        - "Devo andare in bagno"
+        - "Ho caldo"
+        - "Ho freddo"
+        - "Mi sposti?"
+      "si/no":
+        - "si"
+        - "no"
+      "telefono":
+        - "Chiamiamo Tommaso?"
+        - "Chiamiamo Danila?"
+        - "Chiamiamo Giancarlo?"
+        
 
-[plugins]
-    [categorytts]
-    type = "pspgamer.plugin.tts.CategoryTTS"
-    categories = [
-        "dio"
+keyboard:
+    b:
+      handler: categorytts
+    c:
+      handler: categorytts
+     
 
-    ]
 
 #[buttons]
 ## Mars Gaming controller:
