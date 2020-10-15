@@ -1,9 +1,14 @@
-import pygame
-import logging
 import os
 
 # os.environ["SDL_VIDEODRIVER"] = "dummy"
+import pygame.transform
+import pygame.display
+# pygame.display.init()
+# screen = pygame.display.set_mode((1, 1))
 
+import pygame
+import logging
+from pynput.keyboard import Key, Listener
 from pydoc import locate
 from pspgamer.Configuration import Configuration
 from pspgamer.controllers.Joypad import JoypadController, MarsJoypad
@@ -20,17 +25,38 @@ class Main:
 
     def run(self):
         self.log.info("Staring...")
+
         pygame.init()
+        self.log.debug("pygame init()")
 
         ###################
         # Main Event Loop #
         ###################
+        #adas
+        #
+        # def on_press(key):
+        #     print('{0} pressed'.format(key))
+        #
+        # def on_release(key):
+        #     print('{0} release'.format(key))
+        #     if key == Key.esc:
+        #         # Stop listener
+        #         return False
+        #
+        # # Collect events until released
+        # print("BOMBAAAAA")
+        # with Listener(
+        #         on_press=on_press,
+        #         on_release=on_release) as listener:
+        #     listener.join()
+        #
+        # print("zio")
         done = False
         while not done:
             event = pygame.event.wait()
             # event = pygame.event.get()
 
-            print(f"PING {event.type}")
+            self.log.debug(f"PING {event.type}")
 
             if event.type == pygame.QUIT: # If user clicked close.
                 done = True # Flag that we are done so we exit this loop.
@@ -77,36 +103,35 @@ if __name__ == "__main__":
 
     keyboard: KeyboardController = ThreePedalKeyboard()
     # tts = Speecher()
+    # def click_struct_ctts(voice):
+    #     def handler(event):
+    #         last_category = struct[-1]
+    #         button = event.button
+    #
+    #         if button != last_category:
+    #             # Ho premuto questo pulsante per la prima volta
+    #             # Il messaggio e' il primo elemento della prima lista.
+    #             # Copio la lista originale nella seconda posizione, che li la ciclero'
+    #             message = struct[button][0]
+    #             struct[button][2] = struct[button][1].copy()
+    #         else:
+    #             # Sto ciclando la lista
+    #             message = struct[button][2].pop(0)
+    #             struct[button][2].append(message)
+    #
+    #         tts.say(message=message, voice=voice)
+    #         struct[-1] = button
+    #     return handler
 
-    def click_struct_ctts(voice):
-        def handler(event):
-            last_category = struct[-1]
-            button = event.button
-
-            if button != last_category:
-                # Ho premuto questo pulsante per la prima volta
-                # Il messaggio e' il primo elemento della prima lista.
-                # Copio la lista originale nella seconda posizione, che li la ciclero'
-                message = struct[button][0]
-                struct[button][2] = struct[button][1].copy()
-            else:
-                # Sto ciclando la lista
-                message = struct[button][2].pop(0)
-                struct[button][2].append(message)
-
-            tts.say(message=message, voice=voice)
-            struct[-1] = button
-        return handler
-
-    def say_struct(btn, voice):
-
-        def inner(evnt):
-            message = struct[btn][2][-1]
-            # tts.say(message=f"DICO: {message}", voice=voice)
-        return inner
-
+    # def say_struct(btn, voice):
+    #
+    #     def inner(evnt):
+    #         message = struct[btn][2][-1]
+    #         # tts.say(message=f"DICO: {message}", voice=voice)
+    #     return inner
 
     plugins = {}    # Temporary map for registered plugins
+
     ############################
     log.info("Loading Plugins")
     ############################
@@ -116,20 +141,19 @@ if __name__ == "__main__":
         plugin = load_plugin(pconf)
         plugins[name] = plugin
 
-    # ############################
-    # log.info("Loading Buttons")
-    # ############################
-    # for name, item in conf['keyboard'].items():
-    #     keycode = name
-    #
-    #     plugin = plugins[conf['keyboard'][keycode]['handler']]
-    #
-    #     keyboard.add_key_handler(
-    #         keys=[keycode],
-    #         button_up=True,
-    #         handler=plugin.handler
-    #     )
-    #
+    #########################
+    log.info("Loading Keys")
+    #########################
+    for keypressed, item in conf['keyboard'].items():
+        keycode = getattr(pygame, f"K_{keypressed}")
+        plugin = plugins[conf['keyboard'][keypressed]['handler']]
+
+        keyboard.add_key_handler(
+            keys=[keycode],
+            button_up=True,
+            handler=plugin.handler
+        )
+
     # for name, item in conf['buttons'].items():
     #
     #     button = int(name)

@@ -6,10 +6,14 @@ class KeyboardController:
         self.handlers_down = dict()
 
     def handle_event_key_down(self, event):
-        pass
+        handlers = self.handlers_down.get(event.key, list())
+        for handler in handlers:
+            handler(event)
 
     def handle_event_key_up(self, event):
-        pass
+        handlers = self.handlers_up.get(event.key, list())
+        for handler in handlers:
+            handler(event)
 
     def add_key_handler(self, keys: list, handler: callable = None, button_up=False):
         for key in keys:
@@ -27,9 +31,3 @@ class ThreePedalKeyboard(KeyboardController):
 
     def __init__(self):
         super().__init__()
-
-    def handle_event_key_down(self, event):
-        print("DOWN DOWN DOWN")
-
-    def handle_event_key_up(self, event):
-        print("UP UP UP")

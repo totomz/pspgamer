@@ -5,6 +5,8 @@ language:
 plugins:
   categorytts:
     type: pspgamer.plugin.tts.CategoryTTS.CategoryTTS
+    k_select: "K_a"
+    k_action: "K_c"
     categories:
       "cura della persona":
         - "Mi aiuti a soffiarmi il naso?"
@@ -22,7 +24,7 @@ plugins:
         
 
 keyboard:
-    b:
+    a:
       handler: categorytts
     c:
       handler: categorytts
