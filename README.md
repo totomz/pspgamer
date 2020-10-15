@@ -24,7 +24,7 @@ The current required hardware is
 * INPUT: ["buttons"](https://www.amazon.it/gp/product/B01N78D6HB/ref=ppx_yo_dt_b_asin_title_o02_s00?ie=UTF8&psc=1)   
 
 # Licensing
-PSPGamer software kit is licensed under the ZeroTier BSL, which allows source code access and free use for all with the exception of selling for  commercial purposes or embedding the software source code in a commercial hardware. You can use ZeroTier controllers and nodes for free if you use it for non-commercial purposes. Please contact us to learn more.
+PSPGamer software kit is licensed under the PSPgamer BSL, which allows source code access and free use for all with the exception of selling for  commercial purposes or embedding the software source code in a commercial hardware. You can use ZeroTier controllers and nodes for free if you use it for non-commercial purposes. Please contact us to learn more.
 
 The BSL is based on the Business Source License (BSL) version 1.1 developed by MariaDB. This license has been adopted by other commercial open source projects like CockroachDB.
 
