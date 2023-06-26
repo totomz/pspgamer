@@ -16,6 +16,15 @@ A plugin-based system allows the patient to control entertainment devices, like 
 |Samsung Smart TV| ongoing| Tizen only, models from 2016
 |Spotify| in progress | Only podcasts 
   
+```plantuml
+@startuml
+Alice -> Bob: Authentication Request
+Bob --> Alice: Authentication Response
+
+Alice -> Bob: Another authentication Request
+Alice <-- Bob: Another authentication Response
+@enduml
+```
 
 # Hardware
 The current required hardware is 
